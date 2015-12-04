@@ -24,12 +24,12 @@ import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.model.Transaction;
  */
 public class PersistentTransactionDAO implements TransactionDAO {
     private SQLiteDatabase database;
-    private MySQLiteHelperTransaction dbHelper;
-    private String[] allColumns = {MySQLiteHelperTransaction.DATE, MySQLiteHelperTransaction.ACCOUNT_NUMBER,
-            MySQLiteHelperTransaction.AMOUNT, MySQLiteHelperTransaction.EXPENSE_TYPE};
+    private MySQLiteHelper dbHelper;
+    private String[] allColumns = {MySQLiteHelper.DATE, MySQLiteHelper.ACCOUNT_NUMBER,
+            MySQLiteHelper.AMOUNT, MySQLiteHelper.EXPENSE_TYPE};
 
     public PersistentTransactionDAO(Context context) {
-        dbHelper = new MySQLiteHelperTransaction(context);
+        dbHelper = new MySQLiteHelper(context);
     }
 
     public void open() throws SQLException {
@@ -46,24 +46,23 @@ public class PersistentTransactionDAO implements TransactionDAO {
         String dateString = simpleDateFormat.format(date);
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put(MySQLiteHelperTransaction.DATE,dateString);
-        contentValues.put(MySQLiteHelperTransaction.ACCOUNT_NUMBER,accountNo);
+        contentValues.put(MySQLiteHelper.DATE,dateString);
+        contentValues.put(MySQLiteHelper.ACCOUNT_NUMBER,accountNo);
         String expenseTypeString = Constants.INCOME;
         if(expenseType == ExpenseType.EXPENSE){
             expenseTypeString = Constants.EXPENSE;
         }
-        contentValues.put(MySQLiteHelperTransaction.EXPENSE_TYPE,expenseTypeString);
-        contentValues.put(MySQLiteHelperTransaction.AMOUNT,amount);
+        contentValues.put(MySQLiteHelper.EXPENSE_TYPE,expenseTypeString);
+        contentValues.put(MySQLiteHelper.AMOUNT,amount);
 
-        database.insert(MySQLiteHelperTransaction.TABLE_TRANSACTIONS, null, contentValues);
+        database.insert(MySQLiteHelper.TABLE_TRANSACTIONS, null, contentValues);
     }
 
     @Override
     public List<Transaction> getAllTransactionLogs() {
         List<Transaction> transactions = new ArrayList<Transaction>();
 
-        Cursor cursor = database.query(MySQLiteHelperTransaction.TABLE_TRANSACTIONS,
-                allColumns, null, null, null, null, null);
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_TRANSACTIONS,allColumns, null, null, null, null, null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
