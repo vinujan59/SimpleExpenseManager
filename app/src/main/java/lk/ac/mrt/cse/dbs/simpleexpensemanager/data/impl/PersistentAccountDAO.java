@@ -19,12 +19,12 @@ import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.model.ExpenseType;
  */
 public class PersistentAccountDAO implements AccountDAO {
     private SQLiteDatabase database;
-    private MySQLiteHelper dbHelper;
-    private String[] allColumns = {MySQLiteHelper.ACCOUNT_NUMBER, MySQLiteHelper.BANK_NAME,
-            MySQLiteHelper.ACCOUNT_HOLDER_NAME,MySQLiteHelper.BALANCE};
+    private MySQLiteHelperAccount dbHelper;
+    private String[] allColumns = {MySQLiteHelperAccount.ACCOUNT_NUMBER, MySQLiteHelperAccount.BANK_NAME,
+            MySQLiteHelperAccount.ACCOUNT_HOLDER_NAME, MySQLiteHelperAccount.BALANCE};
 
     public PersistentAccountDAO(Context context) {
-        dbHelper = new MySQLiteHelper(context);
+        dbHelper = new MySQLiteHelperAccount(context);
     }
 
     public void open() throws SQLException {
@@ -38,9 +38,9 @@ public class PersistentAccountDAO implements AccountDAO {
     @Override
     public List<String> getAccountNumbersList() {
         List<String> accountNumberList = new ArrayList<String>();
-        String args[] = {String.valueOf(MySQLiteHelper.ACCOUNT_NUMBER)};
+        String args[] = {String.valueOf(MySQLiteHelperAccount.ACCOUNT_NUMBER)};
 
-        Cursor cursor = database.query(MySQLiteHelper.TABLE_ACCOUNTS,args,null,null,null,null,null);
+        Cursor cursor = database.query(MySQLiteHelperAccount.TABLE_ACCOUNTS,args,null,null,null,null,null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()){
@@ -55,7 +55,7 @@ public class PersistentAccountDAO implements AccountDAO {
     public List<Account> getAccountsList() {
         List<Account> accounts = new ArrayList<Account>();
 
-        Cursor cursor = database.query(MySQLiteHelper.TABLE_ACCOUNTS,
+        Cursor cursor = database.query(MySQLiteHelperAccount.TABLE_ACCOUNTS,
                 allColumns, null, null, null, null, null);
 
         cursor.moveToFirst();
@@ -82,17 +82,17 @@ public class PersistentAccountDAO implements AccountDAO {
     @Override
     public void addAccount(Account account) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(MySQLiteHelper.ACCOUNT_NUMBER,account.getAccountNo());
-        contentValues.put(MySQLiteHelper.ACCOUNT_HOLDER_NAME,account.getAccountHolderName());
-        contentValues.put(MySQLiteHelper.BANK_NAME,account.getBankName());
-        contentValues.put(MySQLiteHelper.BALANCE, account.getBalance());
+        contentValues.put(MySQLiteHelperAccount.ACCOUNT_NUMBER,account.getAccountNo());
+        contentValues.put(MySQLiteHelperAccount.ACCOUNT_HOLDER_NAME,account.getAccountHolderName());
+        contentValues.put(MySQLiteHelperAccount.BANK_NAME,account.getBankName());
+        contentValues.put(MySQLiteHelperAccount.BALANCE, account.getBalance());
 
-        database.insert(MySQLiteHelper.TABLE_ACCOUNTS, null, contentValues);
+        database.insert(MySQLiteHelperAccount.TABLE_ACCOUNTS, null, contentValues);
     }
 
     @Override
     public void removeAccount(String accountNo) throws InvalidAccountException {
-        database.delete(MySQLiteHelper.TABLE_ACCOUNTS, MySQLiteHelper.ACCOUNT_NUMBER
+        database.delete(MySQLiteHelperAccount.TABLE_ACCOUNTS, MySQLiteHelperAccount.ACCOUNT_NUMBER
                 + " = " + accountNo, null);
     }
 
@@ -115,6 +115,7 @@ public class PersistentAccountDAO implements AccountDAO {
         String bankName = cursor.getString(1);
         String accountHolderName = cursor.getString(2);
         Double balance = cursor.getDouble(3);
+
         return new Account(accountName,bankName,accountHolderName,balance);
     }
 }
