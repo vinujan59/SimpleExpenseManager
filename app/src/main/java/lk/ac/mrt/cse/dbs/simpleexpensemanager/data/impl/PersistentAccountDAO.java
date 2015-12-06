@@ -72,10 +72,14 @@ public class PersistentAccountDAO implements AccountDAO {
     @Override
     public Account getAccount(String accountNo) throws InvalidAccountException {
         String args[] = {accountNo};
-        Cursor cursor = database.rawQuery("SELECT * FROM "+MySQLiteHelper.TABLE_ACCOUNTS+" WHERE "+MySQLiteHelper.ACCOUNT_NUMBER+"=?", args);
+        Cursor cursor = database.rawQuery("SELECT * FROM " + MySQLiteHelper.TABLE_ACCOUNTS + " WHERE " + MySQLiteHelper.ACCOUNT_NUMBER + "=?", args);
         cursor.moveToFirst();
 
         Account account = cursorToAccount(cursor);
+        if(account == null){
+            String msg = "Account " + accountNo + " is invalid.";
+            throw new InvalidAccountException(msg);
+        }
         return account;
     }
 
@@ -93,6 +97,10 @@ public class PersistentAccountDAO implements AccountDAO {
     @Override
     public void removeAccount(String accountNo) throws InvalidAccountException {
         String[] args = {accountNo};
+        if(getAccount(accountNo) == null){
+            String msg = "Account " + accountNo + " is invalid.";
+            throw new InvalidAccountException(msg);
+        }
         database.delete(MySQLiteHelper.TABLE_ACCOUNTS, MySQLiteHelper.ACCOUNT_NUMBER
                 + " =?", args);
     }
@@ -105,6 +113,9 @@ public class PersistentAccountDAO implements AccountDAO {
             balance = balance - amount;
         }else{
             balance = balance + amount;
+        }
+        if(balance < 0){
+            balance = 0.0;
         }
         account.setBalance(balance);
         removeAccount(accountNo);

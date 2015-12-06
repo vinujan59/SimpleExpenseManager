@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -97,12 +98,12 @@ public class PersistentTransactionDAO implements TransactionDAO {
             e.printStackTrace();
         }
         String accountNumber = cursor.getString(1);
-        String expenseType = cursor.getString(2);
+        String expenseType = cursor.getString(3);
         ExpenseType expenseType1 = ExpenseType.EXPENSE;
         if(expenseType.equals(Constants.INCOME)){
             expenseType1 = ExpenseType.INCOME;
         }
-        Double amount = cursor.getDouble(3);
+        Double amount = cursor.getDouble(2);
         return new Transaction(date1,accountNumber,expenseType1,amount);
     }
 }

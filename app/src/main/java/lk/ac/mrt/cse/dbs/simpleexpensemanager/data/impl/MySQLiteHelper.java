@@ -31,13 +31,13 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
             + " TEXT primary key , " + BANK_NAME
             + " TEXT not null, " + ACCOUNT_HOLDER_NAME
             + " TEXT not null, " + BALANCE
-            + " REAL not null);";
+            + " REAL check("+BALANCE+">= 0));";
 
     private static final String CREATE_TRANSACTIONS = "create table IF NOT EXISTS "
             + TABLE_TRANSACTIONS + "(" + DATE
             + " TEXT not null , " + ACCOUNT_NUMBER
             + " TEXT not null, " + AMOUNT
-            + " REAL not null, " + EXPENSE_TYPE
+            + " REAL check("+AMOUNT+">= 0), " + EXPENSE_TYPE
             + " TEXT not null);";
 
     public MySQLiteHelper(Context context) {
